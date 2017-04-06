@@ -3,12 +3,11 @@ enum BST {
     Empty
 }
 
-/// Inserts a node with this key into the tree rooted at root. 
+/// Inserts a node with this key into the tree rooted at root.
 fn insert(root: Box<BST>, key: i32) -> Box<BST> {
     let copy = *root;
     return match copy {
-        BST::Empty => Box::new(BST::Node(key, Box::new(BST::Empty),
-Box::new(BST::Empty))),
+        BST::Empty => Box::new(BST::Node(key, Box::new(BST::Empty), Box::new(BST::Empty))),
         BST::Node(data, left, right) => if key < data {
             Box::new(BST::Node(data, insert(left, key), right))
         } else {
@@ -17,39 +16,36 @@ Box::new(BST::Empty))),
     };
 }
 
-/// Returns the number of nodes in the tree rooted at this node. 
+/// Returns the number of nodes in the tree rooted at this node.
 fn num_nodes(root: &BST) -> i32 {
     return match *root {
         BST::Empty => 0,
-        BST::Node(data, ref left, ref right) => 1 + num_nodes(left) +
-num_nodes(right),
+        BST::Node(data, ref left, ref right) => 1 + num_nodes(left) +num_nodes(right),
     };
 }
 
-/// Returns the number of leaves in the tree rooted at this node. 
+/// Returns the number of leaves in the tree rooted at this node.
 fn num_leaves(root: &BST) -> i32 {
     return match *root {
-        BST::Empty => 0, 
+        BST::Empty => 0,
         BST::Node(data, ref left, ref right) => {
             match **left {
                 BST::Empty => {
                     match **right {
-                        BST::Empty => return 1, // it's a leaf! 
-                        BST::Node(right_data, ref right_left, ref right_right)
-=> num_leaves(left) + num_leaves(right),
+                        BST::Empty => return 1, // it's a leaf!
+                        BST::Node(right_data, ref right_left, ref right_right) => num_leaves(left) + num_leaves(right),
                     }
                 },
-                BST::Node(left_data, ref left_left, ref left_right) =>
-num_leaves(left) + num_leaves(right),
+                BST::Node(left_data, ref left_left, ref left_right) => num_leaves(left) + num_leaves(right),
             }
         }
     };
 }
 
-/// Returns the height of node x. 
+/// Returns the height of node x.
 fn height(x: &BST) -> i32 {
     return match *x {
-        BST::Empty => -1, 
+        BST::Empty => -1,
         BST::Node(data, ref left, ref right) => {
             let height_left = height(left);
             let height_right = height(right);
@@ -61,13 +57,13 @@ fn height(x: &BST) -> i32 {
     }
 }
 
-/// Returns the depth of node x in the tree rooted at root. 
+/// Returns the depth of node x in the tree rooted at root.
 fn depth(root: &BST, x: &BST) -> i32 {
     return match *x {
-        BST::Empty => -1, 
+        BST::Empty => -1,
         BST::Node(x_data, ref x_left, ref x_right) => {
             match *root {
-                BST::Empty => -1, 
+                BST::Empty => -1,
                 BST::Node(root_data, ref root_left, ref root_right) => {
                     if x_data == root_data {
                         return 0;
@@ -82,7 +78,7 @@ fn depth(root: &BST, x: &BST) -> i32 {
     }
 }
 
-/// Prints the tree sideways. 
+/// Prints the tree sideways.
 fn print(root: &BST) -> () {
     println!("Printing tree: ");
     print_helper(root, 0)
@@ -110,13 +106,13 @@ fn main() {
     println!("Num nodes: {:?}", num_nodes(&tree));
     println!("Num leaves: {:?}", num_leaves(&tree));
     println!("Height: {:?}", height(&tree));
-    
+
     tree = insert(tree, 17);
     tree = insert(tree, 20);
     tree = insert(tree, 2);
     tree = insert(tree, 9);
     print(&tree);
-    
+
     println!("Num nodes: {:?}", num_nodes(&tree));
     let x = Box::new(BST::Node(17, Box::new(BST::Empty), Box::new(BST::Empty)));
     println!("Depth of 17 in tree: {:?}", depth(&tree, &x));
