@@ -4,16 +4,29 @@ enum BST {
 }
 
 /// Inserts a node with this key into the tree rooted at root.
-fn insert(root: Box<BST>, key: i32) -> Box<BST> {
+///     Don't do this, taking ownership causes unnecessary allocations/deallocations.
+fn insert_taking_ownership(root: Box<BST>, key: i32) -> Box<BST> {
     let copy = *root;
     return match copy {
         BST::Empty => Box::new(BST::Node(key, Box::new(BST::Empty), Box::new(BST::Empty))),
         BST::Node(data, left, right) => if key < data {
-            Box::new(BST::Node(data, insert(left, key), right))
+            Box::new(BST::Node(data, insert_taking_ownership(left, key), right))
         } else {
-            Box::new(BST::Node(data, left, insert(right, key)))
+            Box::new(BST::Node(data, left, insert_taking_ownership(right, key)))
         },
     };
+}
+
+/// Inserts a node with this key into the tree rooted at root (borrowing root as a mutable reference).
+fn insert(root: &mut BST, key: i32) -> () {
+    match *root {
+        BST::Empty => *root = BST::Node(key, Box::new(BST::Empty), Box::new(BST::Empty)),
+        BST::Node(data, ref mut left, ref mut right) => if key < data {
+            insert(left, key);
+        } else {
+            insert(right, key);
+        }
+    }
 }
 
 /// Returns the number of nodes in the tree rooted at this node.
@@ -99,18 +112,18 @@ fn print_helper(root: &BST, depth: i32) -> () {
 
 fn main() {
     let mut tree = Box::new(BST::Empty);
-    tree = insert(tree, 8);
-    tree = insert(tree, 22);
-    tree = insert(tree, 1);
+    insert(&mut tree, 8);
+    insert(&mut tree, 22);
+    insert(&mut tree, 1);
     print(&tree);
     println!("Num nodes: {:?}", num_nodes(&tree));
     println!("Num leaves: {:?}", num_leaves(&tree));
     println!("Height: {:?}", height(&tree));
 
-    tree = insert(tree, 17);
-    tree = insert(tree, 20);
-    tree = insert(tree, 2);
-    tree = insert(tree, 9);
+    insert(&mut tree, 17);
+    insert(&mut tree, 20);
+    insert(&mut tree, 2);
+    insert(&mut tree, 9);
     print(&tree);
 
     println!("Num nodes: {:?}", num_nodes(&tree));
