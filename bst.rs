@@ -1,6 +1,6 @@
 enum BST {
     Node(i32, Box<BST>, Box<BST>),
-    Empty
+    Empty,
 }
 
 /// Inserts a node with this key into the tree rooted at root.
@@ -13,7 +13,7 @@ fn insert_taking_ownership(root: Box<BST>, key: i32) -> Box<BST> {
             Box::new(BST::Node(data, insert_taking_ownership(left, key), right))
         } else {
             Box::new(BST::Node(data, left, insert_taking_ownership(right, key)))
-        },
+        }
     };
 }
 
@@ -33,7 +33,7 @@ fn insert(root: &mut BST, key: i32) -> () {
 fn num_nodes(root: &BST) -> i32 {
     return match *root {
         BST::Empty => 0,
-        BST::Node(data, ref left, ref right) => 1 + num_nodes(left) +num_nodes(right),
+        BST::Node(_, ref left, ref right) => 1 + num_nodes(left) + num_nodes(right),
     };
 }
 
@@ -41,15 +41,15 @@ fn num_nodes(root: &BST) -> i32 {
 fn num_leaves(root: &BST) -> i32 {
     return match *root {
         BST::Empty => 0,
-        BST::Node(data, ref left, ref right) => {
+        BST::Node(_, ref left, ref right) => {
             match **left {
                 BST::Empty => {
                     match **right {
                         BST::Empty => return 1, // it's a leaf!
-                        BST::Node(right_data, ref right_left, ref right_right) => num_leaves(left) + num_leaves(right),
+                        BST::Node(_, _, _) => num_leaves(left) + num_leaves(right),
                     }
                 },
-                BST::Node(left_data, ref left_left, ref left_right) => num_leaves(left) + num_leaves(right),
+                BST::Node(_, _, _) => num_leaves(left) + num_leaves(right),
             }
         }
     };
@@ -59,7 +59,7 @@ fn num_leaves(root: &BST) -> i32 {
 fn height(x: &BST) -> i32 {
     return match *x {
         BST::Empty => -1,
-        BST::Node(data, ref left, ref right) => {
+        BST::Node(_, ref left, ref right) => {
             let height_left = height(left);
             let height_right = height(right);
             if height_left > height_right {
@@ -67,14 +67,14 @@ fn height(x: &BST) -> i32 {
             }
             return 1 + height_right;
         }
-    }
+    };
 }
 
 /// Returns the depth of node x in the tree rooted at root.
 fn depth(root: &BST, x: &BST) -> i32 {
     return match *x {
         BST::Empty => -1,
-        BST::Node(x_data, ref x_left, ref x_right) => {
+        BST::Node(x_data, _, _) => {
             match *root {
                 BST::Empty => -1,
                 BST::Node(root_data, ref root_left, ref root_right) => {
@@ -88,7 +88,7 @@ fn depth(root: &BST, x: &BST) -> i32 {
                 }
             }
         }
-    }
+    };
 }
 
 /// Prints the tree sideways.
