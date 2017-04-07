@@ -29,6 +29,48 @@ fn insert(root: &mut BST, key: i32) -> () {
     }
 }
 
+/// Finds the node with the given key in the tree, if it exists,
+///     else returns a reference to an empty tree.
+fn find(root: &BST, key: i32) -> &BST {
+    match *root {
+        BST::Empty => root,
+        BST::Node(data, ref left, ref right) => {
+            if data == key{
+                root
+            }
+            else if key < data {
+                find(left, key)
+            } else {
+                find(right, key)
+            }
+        }
+    }
+}
+
+/// Finds the parent of the node with the key in the tree rooted at root.
+fn find_parent(root: &BST, key: i32) -> &BST {
+    match *root {
+        BST::Empty => root,
+        BST::Node(data, ref left, ref right) => {
+            let found_parent = match **left {
+                BST::Empty => false,
+                BST::Node(data, _, _) => data == key,
+            } || match **right {
+                BST::Empty => false,
+                BST::Node(data, _, _) => data == key,
+            };
+
+            if found_parent {
+                root
+            } else if key < data {
+                find_parent(left, key)
+            } else {
+                find_parent(right, key)
+            }
+        }
+    }
+}
+
 /// Returns the number of nodes in the tree rooted at this node.
 fn num_nodes(root: &BST) -> i32 {
     return match *root {
