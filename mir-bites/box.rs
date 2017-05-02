@@ -1,6 +1,8 @@
-let x = Box::new(5);
-let ptr = Box::into_raw(x);
-let x = unsafe { Box::from_raw(ptr) };
+fn main() {
+    let x = Box::new(5);
+    let ptr = Box::into_raw(x);
+    let x = unsafe { Box::from_raw(ptr) };
+}
 
 // MIR 
 
